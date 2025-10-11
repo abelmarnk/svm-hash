@@ -1,5 +1,3 @@
-#![allow(unexpected_cfgs)]
-
 use std::{
     hash::{
         Hasher
