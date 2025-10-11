@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "lib/*",
+]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+sha2 = "0.10.9"
+hasher = {path = "lib/hasher", version = "0.1.0"}
