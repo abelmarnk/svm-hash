@@ -1,0 +1,28 @@
+[package]
+name = "test-program"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+pinocchio = "0.9.2"
+siphasher = "1.0.1"
+hasher = {workspace = true}
+svm-hashmap = {workspace = true}
+svm-hashset = {workspace = true}
+pinocchio-log = "0.5.1"
+pinocchio-pubkey = "0.3.0"
+
+[dev-dependencies]
+mollusk-svm = "0.7.0"
+solana-address = "1.0.0"
+solana-instruction = "3.0.0"
+
+[lints.rust.unexpected_cfgs]
+level = "allow"
+check-cfg = [
+    'cfg(target_os, values("solana"))'
+]
