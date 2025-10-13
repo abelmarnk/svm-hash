@@ -1,4 +1,5 @@
-use std::{
+#![no_std] // The user is expected to declare their own allocator
+use core::{
     hash::{
         Hash
     }, 
@@ -8,15 +9,19 @@ use std::{
     }
 };
 
+use hashbrown::HashMap as HHashMap;
+
 use hasher::{
     SvmBuildHasher
 };
 
-type SvmHashMap<K,V> = std::collections::HashMap<K,V,SvmBuildHasher>;
+type SvmHashMap<K,V> = HHashMap<K,V,SvmBuildHasher>;
 
 pub struct HashMap<K,V>(
     SvmHashMap<K,V>
 );
+
+// Allow access to self based methods 
 
 impl<K,V> Deref for HashMap<K,V>{
     type Target = SvmHashMap<K,V>;
@@ -33,13 +38,16 @@ impl<K,V> DerefMut for HashMap<K,V>{
     }
 }
 
+// Redeclare associated methods that were tied to a specifc 
+// hash builder for this custom one.
+
 impl<K,V> HashMap<K,V>{
     pub fn new() -> HashMap<K, V> {
         Self(SvmHashMap::default())
     }
 
     pub fn with_capacity(capacity: usize) -> HashMap<K, V> {
-        Self(std::collections::HashMap::
+        Self(HHashMap::
             with_capacity_and_hasher(
                 capacity, 
                 SvmBuildHasher::default()
@@ -53,9 +61,11 @@ where
 {
 
     fn from_iter<T: IntoIterator<Item = (K, V)>>(iter: T) -> HashMap<K, V> {
-        let mut map = HashMap::new();
-        map.extend(iter);
-        map
+        Self(
+            SvmHashMap::from_iter(
+                iter
+            )
+        )
     }
 }
 
@@ -64,10 +74,8 @@ where
     K: Eq + Hash,
 {
     fn from(value: [(K, V);N]) -> Self {
-        Self(
-            SvmHashMap::from_iter(
-                value
-            )
+        Self::from_iter(
+            value
         )
     }
 }

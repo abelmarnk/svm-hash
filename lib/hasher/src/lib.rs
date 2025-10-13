@@ -1,6 +1,8 @@
-use std::{
+#![no_std]
+use core::{
     hash::{
-        Hasher
+        Hasher,
+        BuildHasherDefault
     }, 
     mem::MaybeUninit, 
 };
@@ -19,9 +21,9 @@ unsafe extern "C" {
 
 const HASH_BYTES:usize = 32; 
 
-pub type SvmBuildHasher = std::hash::BuildHasherDefault<SvmBlake3Hasher>;
+pub type SvmBuildHasher = BuildHasherDefault<SvmSHA256Hasher>;
 
-pub struct SvmBlake3Hasher{
+pub struct SvmSHA256Hasher{
     state:MaybeUninit<[u8; HASH_BYTES]>,
     is_used:bool // The purpose of the boolean is for avoiding
                  // the addition of the initial state in the hash
@@ -31,24 +33,25 @@ pub struct SvmBlake3Hasher{
                  // the state has been set.
 }
 
-impl Default for SvmBlake3Hasher{
+impl Default for SvmSHA256Hasher{
     fn default() -> Self {
         Self { state: MaybeUninit::uninit(), is_used: false }
     }
 }
 
 
-impl Hasher for SvmBlake3Hasher{
+impl Hasher for SvmSHA256Hasher{
+    #[inline(always)]
     #[cfg(target_os = "solana")]
     fn write(&mut self, bytes: &[u8]) {
-        let temp_suffix = self.state;
+        let state = self.state;
 
         let data = &[
             // The fields of the struct are private so is_used is guaranteed to be 
             // set only after write has been called            
             if self.is_used {
                 unsafe {
-                    &temp_suffix.assume_init_ref()[..]
+                    &state.assume_init_ref()[..]
                 }
             }else{
                 self.is_used = true;
@@ -69,14 +72,14 @@ impl Hasher for SvmBlake3Hasher{
 
     #[cfg(not(target_os = "solana"))]
     fn write(&mut self, bytes: &[u8]) {
-        let temp_suffix = self.state;
+        let state = self.state;
 
         let data = &[
             if self.is_used {
                 // The fields of the struct are private so is_used is guaranteed to be 
                 // set only after write has been called
                 unsafe {
-                    &temp_suffix.assume_init_ref()[..]
+                    &state.assume_init_ref()[..]
                 }
             }else{
                 self.is_used = true;
@@ -102,6 +105,7 @@ impl Hasher for SvmBlake3Hasher{
         }
     }
     
+    #[inline(always)]    
     fn finish(&self) -> u64 {
         u64::from_le_bytes(
             // Wherever the `Hasher` trait is used,`finish` is only

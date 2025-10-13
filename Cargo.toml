@@ -2,7 +2,8 @@
 resolver = "2"
 
 members = [
-    "lib/*",
+    "lib/*", 
+    "test-program",
 ]
 
 [workspace.package]
@@ -11,4 +12,7 @@ license = "MIT"
 
 [workspace.dependencies]
 sha2 = "0.10.9"
-hasher = {path = "lib/hasher", version = "0.1.0"}
+hashbrown = {version = ">=0.14, <0.17"}
+hasher = {path = "lib/hasher"}
+svm-hashmap = {path = "lib/hashmap"}
+svm-hashset = {path = "lib/hashset"}

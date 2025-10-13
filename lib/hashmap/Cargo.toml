@@ -11,3 +11,4 @@ crate-type = ["rlib"]
 
 [dependencies]
 hasher = {workspace = true}
+hashbrown = {workspace = true}
