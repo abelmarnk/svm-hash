@@ -1,4 +1,4 @@
-#![no_std] // The user is expected to define their own allocator
+#![no_std]
 use core::{
     hash::Hash,
     ops::{Deref, DerefMut},
@@ -11,8 +11,6 @@ use hashbrown::HashSet as HHashSet;
 type SvmHashSet<K> = HHashSet<K, SvmBuildHasher>;
 
 pub struct HashSet<K>(SvmHashSet<K>);
-
-// Allow access to self based methods
 
 impl<K> Deref for HashSet<K> {
     type Target = SvmHashSet<K>;
@@ -27,9 +25,6 @@ impl<K> DerefMut for HashSet<K> {
         &mut self.0
     }
 }
-
-// Redeclare associated methods that were tied to a specifc
-// hash builder for this custom one.
 
 impl<K> HashSet<K> {
     pub fn new() -> Self {

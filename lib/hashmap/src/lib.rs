@@ -1,4 +1,4 @@
-#![no_std] // The user is expected to declare their own allocator
+#![no_std]
 use core::{
     hash::Hash,
     ops::{Deref, DerefMut},
@@ -11,8 +11,6 @@ use svm_hasher::SvmBuildHasher;
 type SvmHashMap<K, V> = HHashMap<K, V, SvmBuildHasher>;
 
 pub struct HashMap<K, V>(SvmHashMap<K, V>);
-
-// Allow access to self based methods
 
 impl<K, V> Deref for HashMap<K, V> {
     type Target = SvmHashMap<K, V>;
@@ -27,9 +25,6 @@ impl<K, V> DerefMut for HashMap<K, V> {
         &mut self.0
     }
 }
-
-// Redeclare associated methods that were tied to a specifc
-// hash builder for this custom one.
 
 impl<K, V> HashMap<K, V> {
     pub fn new() -> HashMap<K, V> {
