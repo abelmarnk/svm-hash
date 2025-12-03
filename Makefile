@@ -4,3 +4,5 @@ build:
 	cargo build-sbf
 test: 
 	SBF_OUT_DIR=$(PWD)/target/deploy cargo test --package test-program
+test-with-output: 
+	SBF_OUT_DIR=$(PWD)/target/deploy cargo test --package test-program -- --no-capture
