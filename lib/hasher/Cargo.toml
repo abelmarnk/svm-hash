@@ -1,9 +1,9 @@
 [package]
-name = "hasher"
+name = "svm-hasher"
 version = "0.1.0"
 edition = {workspace = true}
 license = {workspace = true}
-description = "custom sha256 hasher"
+description = "Custom svm sha256 hasher"
 
 [dependencies]
 sha2 = {workspace = true}

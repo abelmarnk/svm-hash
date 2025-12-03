@@ -13,6 +13,6 @@ license = "MIT"
 [workspace.dependencies]
 sha2 = "0.10.9"
 hashbrown = {version = ">=0.14, <0.17"}
-hasher = {path = "lib/hasher"}
+svm-hasher = {path = "lib/hasher"}
 svm-hashmap = {path = "lib/hashmap"}
 svm-hashset = {path = "lib/hashset"}
