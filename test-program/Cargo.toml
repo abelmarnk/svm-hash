@@ -16,7 +16,8 @@ pinocchio-log = "0.5.1"
 pinocchio-pubkey = "0.3.0"
 
 [dev-dependencies]
-mollusk-svm = "0.7.0"
+mollusk-svm = {version = "0.7.2"}
+rand = "0.9.2"
 solana-address = "1.0.0"
 solana-instruction = "3.0.0"
 
