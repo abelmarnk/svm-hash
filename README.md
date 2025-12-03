@@ -11,20 +11,20 @@ This implementation instead uses **Solana’s built-in SHA-256 syscall**.
 
 Because these syscalls are handled natively by the Solana runtime, they consume less compute units than performing the equivalent SHA-256 computation manually in the program for large enough inputs.
 
-In tests, for inputs of more than 40 bytes, the syscall-based hasher used fewer compute units than the standard SipHash 13.
+Based on the tests, the syscall-based hasher used fewer compute units than the standard SipHash 13.
 
 It applies to both `HashMap` and `HashSet`, since they use the same syscall-backed hasher internally.
 
+The tests also test the `HashMap` and `Hashset` implementations directly since collisions could factor in the `CUs` consumed, in both cases the result still holds.
+
 ---
 
-## When (and when not) to use
+## Notes
 
-This is mainly for **demonstration and experimentation**.
 In practice, Solana programs rarely use `HashMap`s — PDAs and account data are more common tools for state management.
 
 If you **do** use the `HashMap` or `HashSet` on-chain:
 
-* Ensure your keys are usually **> 40 bytes** (like long byte arrays or strings).
 * Note that the hashes produced from hashing the keys are not the same calling SHA-256 on the keys, they are to be used internally by the HashMap/HashSet.
 
 ---
@@ -37,6 +37,3 @@ map.insert(pubkey, value);
 ```
 
 ---
-
-This project’s purpose is primarily **demonstrational** — to illustrate how Solana’s 
-CU definitions could be used to get less CUs used in other places
