@@ -28,8 +28,8 @@ pub fn processor(
     instruction_data: &[u8],
 ) -> ProgramResult {
     match instruction_data[0] {
-        0 => test_hash_map(),
-        1 => test_hash_set(),
+        0 => test_hash_map(&instruction_data[1..]),
+        1 => test_hash_set(&instruction_data[1..]),
         2 => compare_cu_from_hash(&instruction_data[1..]),
         3 => compare_cu_from_hash_set(&instruction_data[1..]),
         4 => compare_cu_from_hash_map(&instruction_data[1..]),
@@ -40,20 +40,25 @@ pub fn processor(
     }
 }
 
-pub fn test_hash_set() -> ProgramResult {
+pub fn test_hash_set(data: &[u8]) -> ProgramResult {
+    let data_1 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[..32]).unwrap();
+    let data_2 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[32..64]).unwrap();
+    let data_3 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[64..96]).unwrap();
+    let data_4 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[96..128]).unwrap();
+
     // `from` calls `from_iter`
     let hashset = SvmHashSet::from([
-        Pubkey::from([0; 32]),
-        Pubkey::from([1; 32]),
-        Pubkey::from([2; 32]),
-        Pubkey::from([3; 32]),
+        Pubkey::from(data_1),
+        Pubkey::from(data_2),
+        Pubkey::from(data_3),
+        Pubkey::from(data_4),
     ]);
 
     // `deref`
-    if !hashset.contains(&Pubkey::from([0; 32]))
-        || !hashset.contains(&Pubkey::from([1; 32]))
-        || !hashset.contains(&Pubkey::from([2; 32]))
-        || !hashset.contains(&Pubkey::from([3; 32]))
+    if !hashset.contains(&Pubkey::from(data_1))
+        || !hashset.contains(&Pubkey::from(data_2))
+        || !hashset.contains(&Pubkey::from(data_3))
+        || !hashset.contains(&Pubkey::from(data_4))
     {
         log!("Fail!!!");
         return Err(Error::Fail.into());
@@ -63,15 +68,15 @@ pub fn test_hash_set() -> ProgramResult {
     let mut hashset = SvmHashSet::new();
 
     // `deref_mut`
-    hashset.insert(Pubkey::from([0; 32]));
-    hashset.insert(Pubkey::from([1; 32]));
-    hashset.insert(Pubkey::from([2; 32]));
-    hashset.insert(Pubkey::from([3; 32]));
+    hashset.insert(Pubkey::from(data_1));
+    hashset.insert(Pubkey::from(data_2));
+    hashset.insert(Pubkey::from(data_3));
+    hashset.insert(Pubkey::from(data_4));
 
-    if !hashset.contains(&Pubkey::from([0; 32]))
-        || !hashset.contains(&Pubkey::from([1; 32]))
-        || !hashset.contains(&Pubkey::from([2; 32]))
-        || !hashset.contains(&Pubkey::from([3; 32]))
+    if !hashset.contains(&Pubkey::from(data_1))
+        || !hashset.contains(&Pubkey::from(data_2))
+        || !hashset.contains(&Pubkey::from(data_3))
+        || !hashset.contains(&Pubkey::from(data_4))
     {
         log!("Fail!!!");
         return Err(Error::Fail.into());
@@ -80,15 +85,15 @@ pub fn test_hash_set() -> ProgramResult {
     // `with_capacity`
     let mut hashset = SvmHashSet::with_capacity(4);
 
-    hashset.insert(Pubkey::from([0; 32]));
-    hashset.insert(Pubkey::from([1; 32]));
-    hashset.insert(Pubkey::from([2; 32]));
-    hashset.insert(Pubkey::from([3; 32]));
+    hashset.insert(Pubkey::from(data_1));
+    hashset.insert(Pubkey::from(data_2));
+    hashset.insert(Pubkey::from(data_3));
+    hashset.insert(Pubkey::from(data_4));
 
-    if !hashset.contains(&Pubkey::from([0; 32]))
-        || !hashset.contains(&Pubkey::from([1; 32]))
-        || !hashset.contains(&Pubkey::from([2; 32]))
-        || !hashset.contains(&Pubkey::from([3; 32]))
+    if !hashset.contains(&Pubkey::from(data_1))
+        || !hashset.contains(&Pubkey::from(data_2))
+        || !hashset.contains(&Pubkey::from(data_3))
+        || !hashset.contains(&Pubkey::from(data_4))
     {
         log!("Fail!!!");
         return Err(Error::Fail.into());
@@ -97,20 +102,25 @@ pub fn test_hash_set() -> ProgramResult {
     Ok(())
 }
 
-pub fn test_hash_map() -> ProgramResult {
+pub fn test_hash_map(data: &[u8]) -> ProgramResult {
+    let data_1 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[..32]).unwrap();
+    let data_2 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[32..64]).unwrap();
+    let data_3 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[64..96]).unwrap();
+    let data_4 = <[u8; 32] as TryFrom<&[u8]>>::try_from(&data[96..128]).unwrap();
+
     // `from` calls `from_iter`
     let hashmap = SvmHashMap::from([
-        (Pubkey::from([4; 32]), 4),
-        (Pubkey::from([5; 32]), 5),
-        (Pubkey::from([6; 32]), 6),
-        (Pubkey::from([7; 32]), 7),
+        (Pubkey::from(data_1), data_4),
+        (Pubkey::from(data_2), data_3),
+        (Pubkey::from(data_3), data_2),
+        (Pubkey::from(data_4), data_1),
     ]);
 
     // `deref`
-    if hashmap.get(&Pubkey::from([4; 32])).unwrap().ne(&4)
-        || hashmap.get(&Pubkey::from([5; 32])).unwrap().ne(&5)
-        || hashmap.get(&Pubkey::from([6; 32])).unwrap().ne(&6)
-        || hashmap.get(&Pubkey::from([7; 32])).unwrap().ne(&7)
+    if hashmap.get(&Pubkey::from(data_1)).unwrap().ne(&data_4)
+        || hashmap.get(&Pubkey::from(data_2)).unwrap().ne(&data_3)
+        || hashmap.get(&Pubkey::from(data_3)).unwrap().ne(&data_2)
+        || hashmap.get(&Pubkey::from(data_4)).unwrap().ne(&data_1)
     {
         log!("Fail!!!");
         return Err(Error::Fail.into());
@@ -120,15 +130,15 @@ pub fn test_hash_map() -> ProgramResult {
     let mut hashmap = SvmHashMap::new();
 
     // `deref_mut`
-    hashmap.insert(Pubkey::from([4; 32]), 4);
-    hashmap.insert(Pubkey::from([5; 32]), 5);
-    hashmap.insert(Pubkey::from([6; 32]), 6);
-    hashmap.insert(Pubkey::from([7; 32]), 7);
+    hashmap.insert(Pubkey::from(data_1), data_4);
+    hashmap.insert(Pubkey::from(data_2), data_3);
+    hashmap.insert(Pubkey::from(data_3), data_2);
+    hashmap.insert(Pubkey::from(data_4), data_1);
 
-    if hashmap.get(&Pubkey::from([4; 32])).unwrap().ne(&4)
-        || hashmap.get(&Pubkey::from([5; 32])).unwrap().ne(&5)
-        || hashmap.get(&Pubkey::from([6; 32])).unwrap().ne(&6)
-        || hashmap.get(&Pubkey::from([7; 32])).unwrap().ne(&7)
+    if hashmap.get(&Pubkey::from(data_1)).unwrap().ne(&data_4)
+        || hashmap.get(&Pubkey::from(data_2)).unwrap().ne(&data_3)
+        || hashmap.get(&Pubkey::from(data_3)).unwrap().ne(&data_2)
+        || hashmap.get(&Pubkey::from(data_4)).unwrap().ne(&data_1)
     {
         log!("Fail!!!");
         return Err(Error::Fail.into());
@@ -137,15 +147,15 @@ pub fn test_hash_map() -> ProgramResult {
     // `with_capacity`
     let mut hashmap = SvmHashMap::with_capacity(4);
 
-    hashmap.insert(Pubkey::from([4; 32]), 4);
-    hashmap.insert(Pubkey::from([5; 32]), 5);
-    hashmap.insert(Pubkey::from([6; 32]), 6);
-    hashmap.insert(Pubkey::from([7; 32]), 7);
+    hashmap.insert(Pubkey::from(data_1), data_4);
+    hashmap.insert(Pubkey::from(data_2), data_3);
+    hashmap.insert(Pubkey::from(data_3), data_2);
+    hashmap.insert(Pubkey::from(data_4), data_1);
 
-    if hashmap.get(&Pubkey::from([4; 32])).unwrap().ne(&4)
-        || hashmap.get(&Pubkey::from([5; 32])).unwrap().ne(&5)
-        || hashmap.get(&Pubkey::from([6; 32])).unwrap().ne(&6)
-        || hashmap.get(&Pubkey::from([7; 32])).unwrap().ne(&7)
+    if hashmap.get(&Pubkey::from(data_1)).unwrap().ne(&data_4)
+        || hashmap.get(&Pubkey::from(data_2)).unwrap().ne(&data_3)
+        || hashmap.get(&Pubkey::from(data_3)).unwrap().ne(&data_2)
+        || hashmap.get(&Pubkey::from(data_4)).unwrap().ne(&data_1)
     {
         log!("Fail!!!");
         return Err(Error::Fail.into());

@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::{rngs::ThreadRng, Rng};
 use solana_instruction::Instruction;
 
 use solana_address::Address;
@@ -8,23 +8,25 @@ use test_program::ID as TEST_PROGRAM_ID;
 use mollusk_svm::{result::Check, Mollusk};
 
 #[test]
-#[ignore]
 pub fn test_hash_map() {
     let program_id = Address::from(TEST_PROGRAM_ID);
 
     let mollusk = Mollusk::new(&program_id, "test_program");
 
+    solana_logger::setup_with("");
+
     let test_hash_map_instruction = Instruction {
         program_id,
         accounts: vec![],
-        data: vec![0],
+        data: std::iter::once(0)
+            .chain(random_input_data_with_len(128, &mut rand::rng()).into_iter())
+            .collect(),
     };
 
     mollusk.process_and_validate_instruction(&test_hash_map_instruction, &[], &[Check::success()]);
 }
 
 #[test]
-#[ignore]
 pub fn test_hash_set() {
     let program_id = Address::from(TEST_PROGRAM_ID);
     let mollusk = Mollusk::new(&program_id, "test_program");
@@ -32,7 +34,9 @@ pub fn test_hash_set() {
     let test_hash_set_instruction = Instruction {
         program_id,
         accounts: vec![],
-        data: vec![1],
+        data: std::iter::once(1)
+            .chain(random_input_data_with_len(128, &mut rand::rng()).into_iter())
+            .collect(),
     };
 
     mollusk.process_and_validate_instruction(&test_hash_set_instruction, &[], &[Check::success()]);
@@ -46,10 +50,15 @@ const UPPER_BOUND: usize = 255;
 fn random_input_data() -> Vec<u8> {
     let mut rng = rand::rng();
     let len = rng.random_range(LOWER_BOUND..=UPPER_BOUND);
+    random_input_data_with_len(len, &mut rng)
+}
+
+fn random_input_data_with_len(len: usize, rng: &mut ThreadRng) -> Vec<u8> {
     (0..len).map(|_| rng.random()).collect()
 }
 
 #[test]
+#[ignore]
 fn test_compare_cu_from_hash() {
     let program_id = Address::from(TEST_PROGRAM_ID);
     let mollusk = Mollusk::new(&program_id, "test_program");
