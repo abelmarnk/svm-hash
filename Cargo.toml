@@ -14,6 +14,6 @@ repository = "https://github.com/abelmarnk/svm-hash"
 [workspace.dependencies]
 sha2 = "0.10.9"
 hashbrown = {version = ">=0.14, <0.17"}
-svm-hasher = {path = "lib/hasher"}
+svm-hasher = {path = "lib/hasher", version = "0.1.0"}
 svm-hashmap = {path = "lib/hashmap"}
 svm-hashset = {path = "lib/hashset"}
