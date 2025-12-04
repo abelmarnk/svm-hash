@@ -1,6 +1,6 @@
 # HashMap / HashSet
 
-This crate provides demonstration implementations of `HashMap` and `HashSet` for Solana programs that use Solana’s hashing syscalls instead of the standard Rust hasher. The goal is to show how hashing compute cost can be reduced if using a hashmap/hashset onchain for certain input sizes.
+These crates provides demonstration implementations of `HashMap` and `HashSet` for Solana programs that use Solana’s hashing syscalls instead of the standard Rust hasher. The goal is to show how hashing compute cost can be reduced if using a hashmap/hashset onchain for certain input sizes.
 
 ---
 
